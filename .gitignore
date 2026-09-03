@@ -1,0 +1,19 @@
+# Visual Studio local files
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Build directories
+Debug/
+Release/
+x64/
+x86/
+
+# vcpkg generated dependencies
+vcpkg_installed/
+
+# Windows
+Thumbs.db
+Desktop.ini
