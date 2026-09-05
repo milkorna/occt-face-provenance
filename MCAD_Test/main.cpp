@@ -50,7 +50,7 @@ TopoDS_Wire makeClosedWire(const std::vector<gp_Pnt>& points)
 
 	BRepBuilderAPI_MakePolygon wireMaker;
 
-	for (std::size_t i = 0; i < points.size(); ++i)
+	for (size_t i = 0; i < points.size(); ++i)
 	{
 		wireMaker.Add(points[i]);
 
@@ -162,7 +162,7 @@ void printHistoryForFaces(
 	BRepAlgoAPI_Cut& cutter,
 	const std::string& shapeName)
 {
-	std::size_t faceIndex = 0;
+	size_t faceIndex = 0;
 
 	for (TopExp_Explorer explorer(sourceShape, TopAbs_FACE);
 		explorer.More();
@@ -182,7 +182,7 @@ void printHistoryForFaces(
 		std::cout << "  modified: " << modified.Size() << '\n';
 		std::cout << "  generated: " << generated.Size() << '\n';
 
-		std::size_t index = 0;
+		size_t index = 0;
 
 		for (const TopoDS_Shape& shape : modified)
 		{
