@@ -18,17 +18,17 @@ Sketch::Sketch(const int id, const gp_Pln& plane) : m_id(id), m_plane(plane)
 {
 }
 
-int Sketch::id() const
+int Sketch::id() const noexcept
 {
 	return m_id;
 }
 
-const gp_Pln& Sketch::plane() const
+const gp_Pln& Sketch::plane() const noexcept
 {
 	return m_plane;
 }
 
-const std::vector<WireInfo>& Sketch::wires() const
+const std::vector<WireInfo>& Sketch::wires() const noexcept
 {
 	return m_wires;
 }

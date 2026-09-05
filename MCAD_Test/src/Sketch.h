@@ -15,9 +15,9 @@ class Sketch
 public:
 	Sketch(const int id, const gp_Pln& plane);
 
-	int id() const;
-	const gp_Pln& plane() const;
-	const std::vector<WireInfo>& wires() const;
+	int id() const noexcept;
+	const gp_Pln& plane() const noexcept;
+	const std::vector<WireInfo>& wires() const noexcept;
 
 	void addClosedWire(const int wireId, const std::vector<gp_Pnt2d>& points);
 
