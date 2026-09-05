@@ -1,0 +1,23 @@
+BasedOnStyle: Microsoft
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+ColumnLimit: 120
+
+BreakBeforeBraces: Allman
+
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+
+BreakConstructorInitializers: BeforeColon
+PackConstructorInitializers: Never
+
+BinPackArguments: true
+BinPackParameters: true
