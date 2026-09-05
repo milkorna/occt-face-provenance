@@ -4,7 +4,6 @@
 
 #include <TopoDS_Wire.hxx>
 #include <gp_Pln.hxx>
-#include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 
 #include <vector>

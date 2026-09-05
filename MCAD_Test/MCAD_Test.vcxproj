@@ -63,9 +63,7 @@
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>
-        $(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -86,9 +84,7 @@
       </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>
-        $(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,10 +96,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\ExtrudeFeature.cpp" />
     <ClCompile Include="src\Sketch.cpp" />
+    <ClCompile Include="src\TrackedShape.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ExtrudeFeature.h" />
     <ClInclude Include="src\Sketch.h" />
+    <ClInclude Include="src\TrackedShape.h" />
     <ClInclude Include="src\WireInfo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
