@@ -13,58 +13,59 @@
 #include <stdexcept>
 #include <vector>
 
-
-Sketch::Sketch(const int id, const gp_Pln& plane) : m_id(id), m_plane(plane)
+Sketch::Sketch(const int id, const gp_Pln& plane)
+    : m_id(id),
+      m_plane(plane)
 {
 }
 
 int Sketch::id() const noexcept
 {
-	return m_id;
+    return m_id;
 }
 
 const gp_Pln& Sketch::plane() const noexcept
 {
-	return m_plane;
+    return m_plane;
 }
 
 const std::vector<WireInfo>& Sketch::wires() const noexcept
 {
-	return m_wires;
+    return m_wires;
 }
 
 void Sketch::addClosedWire(const int wireId, const std::vector<gp_Pnt2d>& points)
 {
-	const TopoDS_Wire wire = makeClosedWire(points);
-	m_wires.push_back({ wireId, wire });
+    const TopoDS_Wire wire = makeClosedWire(points);
+    m_wires.push_back({wireId, wire});
 }
 
 TopoDS_Wire Sketch::makeClosedWire(const std::vector<gp_Pnt2d>& points) const
 {
-	if (points.size() < 3)
-	{
-		throw std::invalid_argument("Closed contour requires at least three points");
-	}
+    if (points.size() < 3)
+    {
+        throw std::invalid_argument("Closed contour requires at least three points");
+    }
 
-	BRepBuilderAPI_MakePolygon wireMaker;
+    BRepBuilderAPI_MakePolygon wireMaker;
 
-	for (size_t i = 0; i < points.size(); ++i)
-	{
-		const gp_Pnt point = ElSLib::Value(points[i].X(), points[i].Y(), m_plane);
-		wireMaker.Add(point);
+    for (size_t i = 0; i < points.size(); ++i)
+    {
+        const gp_Pnt point = ElSLib::Value(points[i].X(), points[i].Y(), m_plane);
+        wireMaker.Add(point);
 
-		if (i > 0 && !wireMaker.Added())
-		{
-			throw std::invalid_argument("Contour contains two consecutive coincident points");
-		}
-	}
+        if (i > 0 && !wireMaker.Added())
+        {
+            throw std::invalid_argument("Contour contains two consecutive coincident points");
+        }
+    }
 
-	wireMaker.Close();
+    wireMaker.Close();
 
-	if (!wireMaker.IsDone())
-	{
-		throw std::runtime_error("Failed to build closed polygonal wire");
-	}
+    if (!wireMaker.IsDone())
+    {
+        throw std::runtime_error("Failed to build closed polygonal wire");
+    }
 
-	return wireMaker.Wire();
+    return wireMaker.Wire();
 }

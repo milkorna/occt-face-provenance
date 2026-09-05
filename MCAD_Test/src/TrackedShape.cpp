@@ -7,62 +7,67 @@
 
 #include <stdexcept>
 
-
-TrackedShape::TrackedShape(const TopoDS_Shape& shape) : m_shape(shape)
+TrackedShape::TrackedShape(const TopoDS_Shape& shape)
+    : m_shape(shape)
 {
-	if (m_shape.IsNull())
-	{
-		throw std::invalid_argument("Tracked shape cannot be null");
-	}
+    if (m_shape.IsNull())
+    {
+        throw std::invalid_argument("Tracked shape cannot be null");
+    }
 
-	for (TopExp_Explorer explorer(m_shape, TopAbs_FACE); explorer.More(); explorer.Next())
-	{
-		m_faceOrigins.Bind(explorer.Current(), WireIdSet{});
-	}
+    for (TopExp_Explorer explorer(m_shape, TopAbs_FACE); explorer.More(); explorer.Next())
+    {
+        m_faceOrigins.Bind(explorer.Current(), WireIdSet{});
+    }
 }
 
 const TopoDS_Shape& TrackedShape::shape() const noexcept
 {
-	return m_shape;
+    return m_shape;
 }
 
-bool TrackedShape::containsFace(const TopoDS_Face& face) const
-{
-	if (face.IsNull())
-	{
-		return false;
-	}
-
-	return m_faceOrigins.IsBound(face);
-}
+// bool TrackedShape::containsFace(const TopoDS_Face& face) const
+//{
+//	if (face.IsNull())
+//	{
+//		return false;
+//	}
+//
+//	return m_faceOrigins.IsBound(face);
+// }
 
 const WireIdSet& TrackedShape::faceOrigins(const TopoDS_Face& face) const
 {
-	if (!containsFace(face))
-	{
-		throw std::invalid_argument("Face does not belong to the tracked shape");
-	}
+    const WireIdSet* origins = m_faceOrigins.Seek(face);
 
-	return m_faceOrigins.Find(face);
+    if (origins == nullptr)
+    {
+        throw std::invalid_argument("Face does not belong to the tracked shape");
+    }
+
+    return *origins;
 }
 
 void TrackedShape::addFaceOrigin(const TopoDS_Face& face, const int wireId)
 {
-	if (!containsFace(face))
-	{
-		throw std::invalid_argument("Face does not belong to the tracked shape");
-	}
+    WireIdSet* origins = m_faceOrigins.ChangeSeek(face);
 
-	m_faceOrigins.ChangeFind(face).insert(wireId);
+    if (origins == nullptr)
+    {
+        throw std::invalid_argument("Face does not belong to the tracked shape");
+    }
+
+    origins->insert(wireId);
 }
 
 void TrackedShape::addFaceOrigins(const TopoDS_Face& face, const WireIdSet& wireIds)
 {
-	if (!containsFace(face))
-	{
-		throw std::invalid_argument("Face does not belong to the tracked shape");
-	}
+    WireIdSet* origins = m_faceOrigins.ChangeSeek(face);
 
-	WireIdSet& origins = m_faceOrigins.ChangeFind(face);
-	origins.insert(wireIds.begin(), wireIds.end());
+    if (origins == nullptr)
+    {
+        throw std::invalid_argument("Face does not belong to the tracked shape");
+    }
+
+    origins->insert(wireIds.begin(), wireIds.end());
 }
