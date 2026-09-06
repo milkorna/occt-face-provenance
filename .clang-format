@@ -7,6 +7,7 @@ UseTab: Never
 ColumnLimit: 120
 
 BreakBeforeBraces: Allman
+BreakTemplateDeclarations: Yes
 
 PointerAlignment: Left
 ReferenceAlignment: Left
