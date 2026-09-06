@@ -20,5 +20,8 @@ AllowShortBlocksOnASingleLine: Never
 BreakConstructorInitializers: BeforeColon
 PackConstructorInitializers: Never
 
+SpaceBeforeCpp11BracedList: false
+TypenameMacros: [Handle]
+
 BinPackArguments: true
 BinPackParameters: true
