@@ -3,6 +3,10 @@
 #include "Sketch.h"
 #include "TrackedShape.h"
 
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Face.hxx>
 #include <gp.hxx>
 #include <gp_Ax3.hxx>
 #include <gp_Dir.hxx>
@@ -10,15 +14,36 @@
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 
-// const gp_Pnt point1(0., 0., 0.);
-// const gp_Pnt point2(10., 0., 0.);
-// const gp_Pnt point3(10., 10., 0.);
-// const gp_Pnt point4(0., 10., 0.);
+#include <iostream>
 
-// const gp_Pnt point1(15., 2., 12.);
-// const gp_Pnt point2(15., 8., 12.);
-// const gp_Pnt point3(15., 8., 6.);
-// const gp_Pnt point4(15., 2., 6.);
+namespace
+{
+void printFaceOrigins(const TrackedShape& trackedShape)
+{
+    int faceIndex{1};
+
+    for (TopExp_Explorer explorer{trackedShape.shape(), TopAbs_FACE}; explorer.More(); explorer.Next())
+    {
+        const TopoDS_Face& face{TopoDS::Face(explorer.Current())};
+        const WireIdSet& origins{trackedShape.faceOrigins(face)};
+
+        std::cout << "Face " << faceIndex << ":";
+
+        if (origins.empty())
+        {
+            std::cout << " no source wire";
+        }
+
+        for (const int wireId : origins)
+        {
+            std::cout << "\n\t Wire " << wireId;
+        }
+
+        std::cout << '\n';
+        ++faceIndex;
+    }
+}
+} // namespace
 
 int main()
 {
@@ -36,7 +61,7 @@ int main()
 
     const gp_Ax3 sketch2Axis{
         gp_Pnt{15.0, 0.0, 0.0},
-        gp_Dir{-1.0, 0.0, 0.0},
+        gp_Dir{1.0, 0.0, 0.0},
         gp_Dir{0.0, 1.0, 0.0},
     };
 
@@ -49,11 +74,13 @@ int main()
                                  gp_Pnt2d{2.0, 6.0},
                              });
 
-    ExtrudeFeature extrude2{2, sketch2, 2, 10.0};
+    ExtrudeFeature extrude2{2, sketch2, 2, -10.0};
     const TrackedShape& tool{extrude2.result()};
 
     BooleanFeature cut{3, BooleanType::Subtract, body, tool};
     const TrackedShape& result{cut.result()};
+
+    printFaceOrigins(result);
 
     return 0;
 }
