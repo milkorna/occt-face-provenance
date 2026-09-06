@@ -40,15 +40,15 @@ const WireInfo& findWire(const Sketch& sketch, const int wireId)
 
 TopoDS_Face makeProfileFace(const Sketch& sketch, const WireInfo& wireInfo)
 {
-    BRepBuilderAPI_MakeFace faceMaker(sketch.plane(), wireInfo.m_wire, true);
+    BRepBuilderAPI_MakeFace faceMaker{sketch.plane(), wireInfo.m_wire, true};
 
     if (!faceMaker.IsDone())
     {
         throw std::runtime_error("Failed to build profile face from wire");
     }
 
-    const TopoDS_Face& face = faceMaker.Face();
-    BRepCheck_Analyzer analyzer(face);
+    const TopoDS_Face& face{faceMaker.Face()};
+    BRepCheck_Analyzer analyzer{face};
 
     if (!analyzer.IsValid())
     {
@@ -65,10 +65,10 @@ gp_Vec makeExtrusionVector(const Sketch& sketch, const double distance)
         throw std::invalid_argument("Extrusion distance is too small");
     }
 
-    const gp_Ax1& axis = sketch.plane().Axis();
-    const gp_Dir& direction = axis.Direction();
+    const gp_Ax1& axis{sketch.plane().Axis()};
+    const gp_Dir& direction{axis.Direction()};
 
-    gp_Vec extrusionVector(direction);
+    gp_Vec extrusionVector{direction};
     extrusionVector.Multiply(distance);
 
     return extrusionVector;
@@ -86,18 +86,18 @@ void addFaceOrigin(TrackedShape& trackedShape, const TopoDS_Shape& shape, const 
 
 TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double distance)
 {
-    const WireInfo& wireInfo = findWire(sketch, wireId);
-    const TopoDS_Face profileFace = makeProfileFace(sketch, wireInfo);
-    const gp_Vec extrusionVector = makeExtrusionVector(sketch, distance);
+    const WireInfo& wireInfo{findWire(sketch, wireId)};
+    const TopoDS_Face profileFace{makeProfileFace(sketch, wireInfo)};
+    const gp_Vec extrusionVector{makeExtrusionVector(sketch, distance)};
 
-    BRepPrimAPI_MakePrism extruder(profileFace, extrusionVector);
+    BRepPrimAPI_MakePrism extruder{profileFace, extrusionVector};
 
     if (!extruder.IsDone())
     {
         throw std::runtime_error("Failed to build extrusion");
     }
 
-    const TopoDS_Shape shape = extruder.Shape();
+    const TopoDS_Shape shape{extruder.Shape()};
 
     if (shape.IsNull())
     {
@@ -109,14 +109,14 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
         throw std::runtime_error("Extrusion did not produce solid");
     }
 
-    TrackedShape result(shape);
+    TrackedShape result{shape};
 
     addFaceOrigin(result, extruder.FirstShape(), wireInfo.m_id);
     addFaceOrigin(result, extruder.LastShape(), wireInfo.m_id);
 
-    for (TopExp_Explorer explorer(wireInfo.m_wire, TopAbs_EDGE); explorer.More(); explorer.Next())
+    for (TopExp_Explorer explorer{wireInfo.m_wire, TopAbs_EDGE}; explorer.More(); explorer.Next())
     {
-        const TopoDS_Edge& edge = TopoDS::Edge(explorer.Current());
+        const TopoDS_Edge& edge{TopoDS::Edge(explorer.Current())};
         const auto& generatedShapes = extruder.Generated(edge);
 
         for (const TopoDS_Shape& generatedShape : generatedShapes)
@@ -125,9 +125,9 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
         }
     }
 
-    for (TopExp_Explorer explorer(shape, TopAbs_FACE); explorer.More(); explorer.Next())
+    for (TopExp_Explorer explorer{shape, TopAbs_FACE}; explorer.More(); explorer.Next())
     {
-        const TopoDS_Face& face = TopoDS::Face(explorer.Current());
+        const TopoDS_Face& face{TopoDS::Face(explorer.Current())};
 
         if (result.faceOrigins(face).empty())
         {
@@ -140,11 +140,11 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
 } // namespace
 
 ExtrudeFeature::ExtrudeFeature(const int id, const Sketch& sketch, const int wireId, const double distance)
-    : m_id(id),
-      m_sketchId(sketch.id()),
-      m_wireId(wireId),
-      m_distance(distance),
-      m_result(buildExtrusion(sketch, wireId, distance))
+    : m_id{id},
+      m_sketchId{sketch.id()},
+      m_wireId{wireId},
+      m_distance{distance},
+      m_result{buildExtrusion(sketch, wireId, distance)}
 {
 }
 

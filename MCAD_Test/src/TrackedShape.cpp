@@ -8,14 +8,14 @@
 #include <stdexcept>
 
 TrackedShape::TrackedShape(const TopoDS_Shape& shape)
-    : m_shape(shape)
+    : m_shape{shape}
 {
     if (m_shape.IsNull())
     {
         throw std::invalid_argument("Tracked shape cannot be null");
     }
 
-    for (TopExp_Explorer explorer(m_shape, TopAbs_FACE); explorer.More(); explorer.Next())
+    for (TopExp_Explorer explorer{m_shape, TopAbs_FACE}; explorer.More(); explorer.Next())
     {
         m_faceOrigins.Bind(explorer.Current(), WireIdSet{});
     }
@@ -38,7 +38,7 @@ bool TrackedShape::containsFace(const TopoDS_Face& face) const
 
 const WireIdSet& TrackedShape::faceOrigins(const TopoDS_Face& face) const
 {
-    const WireIdSet* origins = m_faceOrigins.Seek(face);
+    const WireIdSet* origins{m_faceOrigins.Seek(face)};
 
     if (origins == nullptr)
     {
@@ -50,7 +50,7 @@ const WireIdSet& TrackedShape::faceOrigins(const TopoDS_Face& face) const
 
 void TrackedShape::addFaceOrigin(const TopoDS_Face& face, const int wireId)
 {
-    WireIdSet* origins = m_faceOrigins.ChangeSeek(face);
+    WireIdSet* origins{m_faceOrigins.ChangeSeek(face)};
 
     if (origins == nullptr)
     {
@@ -62,7 +62,7 @@ void TrackedShape::addFaceOrigin(const TopoDS_Face& face, const int wireId)
 
 void TrackedShape::addFaceOrigins(const TopoDS_Face& face, const WireIdSet& wireIds)
 {
-    WireIdSet* origins = m_faceOrigins.ChangeSeek(face);
+    WireIdSet* origins{m_faceOrigins.ChangeSeek(face)};
 
     if (origins == nullptr)
     {

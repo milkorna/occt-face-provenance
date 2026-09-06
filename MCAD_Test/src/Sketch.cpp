@@ -1,21 +1,20 @@
 #include "Sketch.h"
+
 #include "WireInfo.h"
 
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <ElSLib.hxx>
 #include <TopoDS_Wire.hxx>
-#include <gp_Ax3.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
-#include <gp_Vec.hxx>
 
 #include <stdexcept>
 #include <vector>
 
 Sketch::Sketch(const int id, const gp_Pln& plane)
-    : m_id(id),
-      m_plane(plane)
+    : m_id{id},
+      m_plane{plane}
 {
 }
 
@@ -36,8 +35,8 @@ const std::vector<WireInfo>& Sketch::wires() const noexcept
 
 void Sketch::addClosedWire(const int wireId, const std::vector<gp_Pnt2d>& points)
 {
-    const TopoDS_Wire wire = makeClosedWire(points);
-    m_wires.push_back({wireId, wire});
+    const TopoDS_Wire wire{makeClosedWire(points)};
+    m_wires.push_back(WireInfo{wireId, wire});
 }
 
 TopoDS_Wire Sketch::makeClosedWire(const std::vector<gp_Pnt2d>& points) const
@@ -47,11 +46,11 @@ TopoDS_Wire Sketch::makeClosedWire(const std::vector<gp_Pnt2d>& points) const
         throw std::invalid_argument("Closed contour requires at least three points");
     }
 
-    BRepBuilderAPI_MakePolygon wireMaker;
+    BRepBuilderAPI_MakePolygon wireMaker{};
 
     for (size_t i = 0; i < points.size(); ++i)
     {
-        const gp_Pnt point = ElSLib::Value(points[i].X(), points[i].Y(), m_plane);
+        const gp_Pnt point{ElSLib::Value(points[i].X(), points[i].Y(), m_plane)};
         wireMaker.Add(point);
 
         if (i > 0 && !wireMaker.Added())
