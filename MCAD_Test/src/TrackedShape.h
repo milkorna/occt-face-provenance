@@ -16,7 +16,7 @@ class TrackedShape
 
     const TopoDS_Shape& shape() const noexcept;
 
-    // bool containsFace(const TopoDS_Face& face) const;
+    bool containsFace(const TopoDS_Face& face) const;
     const WireIdSet& faceOrigins(const TopoDS_Face& face) const;
 
     void addFaceOrigin(const TopoDS_Face& face, const int wireId);

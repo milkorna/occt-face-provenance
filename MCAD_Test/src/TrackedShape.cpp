@@ -26,15 +26,15 @@ const TopoDS_Shape& TrackedShape::shape() const noexcept
     return m_shape;
 }
 
-// bool TrackedShape::containsFace(const TopoDS_Face& face) const
-//{
-//	if (face.IsNull())
-//	{
-//		return false;
-//	}
-//
-//	return m_faceOrigins.IsBound(face);
-// }
+bool TrackedShape::containsFace(const TopoDS_Face& face) const
+{
+    if (face.IsNull())
+    {
+        return false;
+    }
+
+    return m_faceOrigins.IsBound(face);
+}
 
 const WireIdSet& TrackedShape::faceOrigins(const TopoDS_Face& face) const
 {
