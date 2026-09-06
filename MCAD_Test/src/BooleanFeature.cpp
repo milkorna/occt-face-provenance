@@ -96,10 +96,10 @@ TrackedShape buildBoolean(const BooleanType type, const TrackedShape& argument, 
 {
     switch (type)
     {
-    case BooleanType::Union:
+    case BooleanType::Subtract:
         return buildBoolean<BRepAlgoAPI_Cut>(argument, tool);
 
-    case BooleanType::Subtract:
+    case BooleanType::Union:
         return buildBoolean<BRepAlgoAPI_Fuse>(argument, tool);
     }
 
