@@ -32,11 +32,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-	
-  <Import
-    Project="$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.props"
-    Condition="Exists('$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.props')" />
-  
+  <Import Project="$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.props" Condition="Exists('$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.props')" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
@@ -62,12 +58,12 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+        _DEBUG;_CONSOLE;%(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-	  <AdditionalIncludeDirectories>
-		$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)
-	  </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -83,12 +79,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+        NDEBUG;_CONSOLE;%(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>
-		$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src;$(SolutionDir)vcpkg_installed\$(VcpkgTriplet)\include\opencascade;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,19 +96,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\BooleanFeature.cpp" />
+    <ClCompile Include="src\ExampleRunner.cpp" />
+    <ClCompile Include="src\ExtrudeFeature.cpp" />
+    <ClCompile Include="src\ModelViewer.cpp" />
+    <ClCompile Include="src\Sketch.cpp" />
+    <ClCompile Include="src\TrackedShape.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BooleanFeature.h" />
+    <ClInclude Include="src\ExampleRunner.h" />
+    <ClInclude Include="src\ExtrudeFeature.h" />
+    <ClInclude Include="src\ModelViewer.h" />
+    <ClInclude Include="src\Sketch.h" />
+    <ClInclude Include="src\TrackedShape.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-
-	<Import
-	  Project="$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets"
-	  Condition="Exists('$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
-	
+  <Import Project="$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
+  <Target Name="EnsureVcpkgAppLocal" AfterTargets="Build" Condition="&#xD;&#xA;      '$(_ZVcpkgClassicOrManifest)' == 'true'&#xD;&#xA;      and Exists('$(TargetPath)')&#xD;&#xA;      and Exists('$(_ZVcpkgExecutable)')&#xD;&#xA;      and Exists('$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)bin')&#xD;&#xA;    ">
+    <Message Text="[MCAD_Test] Ensuring vcpkg runtime dependencies are deployed..." Importance="High" />
+    <Exec Command="%22$(_ZVcpkgExecutable)%22 z-applocal --target-binary=%22$(TargetPath)%22 --installed-bin-dir=%22$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)bin%22" UseUtf8Encoding="Always" StdOutEncoding="utf-8" StdErrEncoding="utf-8" UseCommandProcessor="false" />
+  </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Target Name="EnsureVcpkg"
-	  BeforeTargets="PrepareForBuild">
-	<Error
-	  Condition="!Exists('$(VCInstallDir)vcpkg\vcpkg.exe')"
-      Text="This project requires the Visual Studio vcpkg package manager component." />
+  <Target Name="EnsureVcpkg" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(VCInstallDir)vcpkg\vcpkg.exe')" Text="This project requires the Visual Studio vcpkg package manager component." />
   </Target>
 </Project>
