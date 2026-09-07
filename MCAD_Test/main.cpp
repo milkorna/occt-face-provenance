@@ -83,7 +83,7 @@ int main()
 
     printFaceOrigins(result);
 
-    ModelViewer viewer{result.shape()};
+    ModelViewer viewer{result};
     viewer.run();
 
     return 0;

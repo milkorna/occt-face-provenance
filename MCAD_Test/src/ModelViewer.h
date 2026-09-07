@@ -17,10 +17,12 @@
 #include <V3d_Viewer.hxx>
 #include <WNT_Window.hxx>
 
+class TrackedShape;
+
 class ModelViewer
 {
   public:
-    explicit ModelViewer(const TopoDS_Shape& shape);
+    explicit ModelViewer(const TrackedShape& trackedShape);
 
     void run();
 
@@ -30,6 +32,10 @@ class ModelViewer
     void createWindow();
     void initializeViewer();
     void displayShape(const TopoDS_Shape& shape);
+    void updateDetectedFaceInfo(const int x, const int y);
+    void clearDetectedFaceInfo();
+
+    const TrackedShape& m_trackedShape;
 
     HWND m_windowHandle{nullptr};
 
@@ -38,4 +44,6 @@ class ModelViewer
     Handle(V3d_View) m_view{};
     Handle(AIS_InteractiveContext) m_context{};
     Handle(AIS_Shape) m_shapePresentation{};
+
+    int m_detectedFaceIndex{0};
 };
