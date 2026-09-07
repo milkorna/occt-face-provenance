@@ -8,6 +8,7 @@
 #include <Aspect_DisplayConnection.hxx>
 #include <Aspect_Handle.hxx>
 #include <OpenGl_GraphicDriver.hxx>
+#include <Prs3d_Drawer.hxx>
 #include <Quantity_Color.hxx>
 #include <Quantity_NameOfColor.hxx>
 #include <Standard_Handle.hxx>
@@ -98,6 +99,9 @@ void ModelViewer::displayShape(const TopoDS_Shape& shape)
 {
     m_shapePresentation = new AIS_Shape{shape};
     m_shapePresentation->SetDisplayMode(AIS_Shaded);
+
+    const Handle(Prs3d_Drawer)& drawer{m_shapePresentation->Attributes()};
+    drawer->SetFaceBoundaryDraw(true);
 
     m_context->Display(m_shapePresentation, false);
 
