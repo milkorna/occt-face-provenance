@@ -1,5 +1,6 @@
 #include "BooleanFeature.h"
 #include "ExtrudeFeature.h"
+#include "ModelViewer.h"
 #include "Sketch.h"
 #include "TrackedShape.h"
 
@@ -81,6 +82,9 @@ int main()
     const TrackedShape& result{cut.result()};
 
     printFaceOrigins(result);
+
+    ModelViewer viewer{result.shape()};
+    viewer.run();
 
     return 0;
 }
