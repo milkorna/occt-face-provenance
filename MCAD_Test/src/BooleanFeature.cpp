@@ -1,5 +1,6 @@
 #include "BooleanFeature.h"
 
+#include "IdGenerator.h"
 #include "TrackedShape.h"
 
 #include <BRepAlgoAPI_BooleanOperation.hxx>
@@ -107,9 +108,8 @@ TrackedShape buildBoolean(const BooleanType type, const TrackedShape& argument, 
 }
 } // namespace
 
-BooleanFeature::BooleanFeature(const int id, const BooleanType type, const TrackedShape& argument,
-                               const TrackedShape& tool)
-    : m_id{id},
+BooleanFeature::BooleanFeature(const BooleanType type, const TrackedShape& argument, const TrackedShape& tool)
+    : m_id{IdGenerator::nextFeatureId()},
       m_type{type},
       m_result{buildBoolean(type, argument, tool)}
 {

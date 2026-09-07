@@ -1,5 +1,6 @@
 #include "Sketch.h"
 
+#include "IdGenerator.h"
 #include "WireInfo.h"
 
 #include <BRepBuilderAPI_MakePolygon.hxx>
@@ -12,8 +13,8 @@
 #include <stdexcept>
 #include <vector>
 
-Sketch::Sketch(const int id, const gp_Pln& plane)
-    : m_id{id},
+Sketch::Sketch(const gp_Pln& plane)
+    : m_id{IdGenerator::nextSketchId()},
       m_plane{plane}
 {
 }
@@ -33,10 +34,14 @@ const std::vector<WireInfo>& Sketch::wires() const noexcept
     return m_wires;
 }
 
-void Sketch::addClosedWire(const int wireId, const std::vector<gp_Pnt2d>& points)
+int Sketch::addClosedWire(const std::vector<gp_Pnt2d>& points)
 {
+    const int wireId{IdGenerator::nextWireId()};
     const TopoDS_Wire wire{makeClosedWire(points)};
+
     m_wires.push_back(WireInfo{wireId, wire});
+
+    return wireId;
 }
 
 TopoDS_Wire Sketch::makeClosedWire(const std::vector<gp_Pnt2d>& points) const

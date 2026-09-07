@@ -1,5 +1,6 @@
 #include "ExtrudeFeature.h"
 
+#include "IdGenerator.h"
 #include "Sketch.h"
 #include "TrackedShape.h"
 #include "WireInfo.h"
@@ -139,8 +140,8 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
 }
 } // namespace
 
-ExtrudeFeature::ExtrudeFeature(const int id, const Sketch& sketch, const int wireId, const double distance)
-    : m_id{id},
+ExtrudeFeature::ExtrudeFeature(const Sketch& sketch, const int wireId, const double distance)
+    : m_id{IdGenerator::nextFeatureId()},
       m_sketchId{sketch.id()},
       m_wireId{wireId},
       m_distance{distance},

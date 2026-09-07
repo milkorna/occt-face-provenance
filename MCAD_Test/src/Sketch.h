@@ -11,13 +11,13 @@
 class Sketch
 {
   public:
-    Sketch(const int id, const gp_Pln& plane);
+    explicit Sketch(const gp_Pln& plane);
 
     int id() const noexcept;
     const gp_Pln& plane() const noexcept;
     const std::vector<WireInfo>& wires() const noexcept;
 
-    void addClosedWire(const int wireId, const std::vector<gp_Pnt2d>& points);
+    int addClosedWire(const std::vector<gp_Pnt2d>& points);
 
   private:
     TopoDS_Wire makeClosedWire(const std::vector<gp_Pnt2d>& points) const;

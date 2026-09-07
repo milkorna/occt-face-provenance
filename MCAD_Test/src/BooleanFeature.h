@@ -11,7 +11,7 @@ enum class BooleanType
 class BooleanFeature
 {
   public:
-    BooleanFeature(const int id, const BooleanType type, const TrackedShape& argument, const TrackedShape& tool);
+    BooleanFeature(const BooleanType type, const TrackedShape& argument, const TrackedShape& tool);
 
     int id() const noexcept;
     BooleanType type() const noexcept;
