@@ -11,6 +11,7 @@
 #include <gp_Pnt2d.hxx>
 
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 Sketch::Sketch(const gp_Pln& plane)
@@ -29,9 +30,17 @@ const gp_Pln& Sketch::plane() const noexcept
     return m_plane;
 }
 
-const std::vector<WireInfo>& Sketch::wires() const noexcept
+const TopoDS_Wire& Sketch::wire(const int wireId) const
 {
-    return m_wires;
+    for (const WireInfo& wireInfo : m_wires)
+    {
+        if (wireInfo.m_id == wireId)
+        {
+            return wireInfo.m_wire;
+        }
+    }
+
+    throw std::invalid_argument("Wire " + std::to_string(wireId) + " not found in sketch");
 }
 
 int Sketch::addClosedWire(const std::vector<gp_Pnt2d>& points)

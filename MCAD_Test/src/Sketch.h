@@ -15,7 +15,7 @@ class Sketch
 
     int id() const noexcept;
     const gp_Pln& plane() const noexcept;
-    const std::vector<WireInfo>& wires() const noexcept;
+    const TopoDS_Wire& wire(const int wireId) const;
 
     int addClosedWire(const std::vector<gp_Pnt2d>& points);
 

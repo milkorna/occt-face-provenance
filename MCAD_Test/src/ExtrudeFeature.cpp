@@ -3,7 +3,6 @@
 #include "IdGenerator.h"
 #include "Sketch.h"
 #include "TrackedShape.h"
-#include "WireInfo.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -15,6 +14,7 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Wire.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Dir.hxx>
 #include <gp_Pln.hxx>
@@ -22,26 +22,12 @@
 
 #include <cmath>
 #include <stdexcept>
-#include <string>
 
 namespace
 {
-const WireInfo& findWire(const Sketch& sketch, const int wireId)
+TopoDS_Face makeProfileFace(const Sketch& sketch, const TopoDS_Wire& wire)
 {
-    for (const WireInfo& wireInfo : sketch.wires())
-    {
-        if (wireInfo.m_id == wireId)
-        {
-            return wireInfo;
-        }
-    }
-
-    throw std::invalid_argument("Wire " + std::to_string(wireId) + " not found");
-}
-
-TopoDS_Face makeProfileFace(const Sketch& sketch, const WireInfo& wireInfo)
-{
-    BRepBuilderAPI_MakeFace faceMaker{sketch.plane(), wireInfo.m_wire, true};
+    BRepBuilderAPI_MakeFace faceMaker{sketch.plane(), wire, true};
 
     if (!faceMaker.IsDone())
     {
@@ -87,8 +73,8 @@ void addFaceOrigin(TrackedShape& trackedShape, const TopoDS_Shape& shape, const 
 
 TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double distance)
 {
-    const WireInfo& wireInfo{findWire(sketch, wireId)};
-    const TopoDS_Face profileFace{makeProfileFace(sketch, wireInfo)};
+    const TopoDS_Wire& wire{sketch.wire(wireId)};
+    const TopoDS_Face profileFace{makeProfileFace(sketch, wire)};
     const gp_Vec extrusionVector{makeExtrusionVector(sketch, distance)};
 
     BRepPrimAPI_MakePrism extruder{profileFace, extrusionVector};
@@ -112,17 +98,17 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
 
     TrackedShape result{shape};
 
-    addFaceOrigin(result, extruder.FirstShape(), wireInfo.m_id);
-    addFaceOrigin(result, extruder.LastShape(), wireInfo.m_id);
+    addFaceOrigin(result, extruder.FirstShape(), wireId);
+    addFaceOrigin(result, extruder.LastShape(), wireId);
 
-    for (TopExp_Explorer explorer{wireInfo.m_wire, TopAbs_EDGE}; explorer.More(); explorer.Next())
+    for (TopExp_Explorer explorer{wire, TopAbs_EDGE}; explorer.More(); explorer.Next())
     {
         const TopoDS_Edge& edge{TopoDS::Edge(explorer.Current())};
         const auto& generatedShapes = extruder.Generated(edge);
 
         for (const TopoDS_Shape& generatedShape : generatedShapes)
         {
-            addFaceOrigin(result, generatedShape, wireInfo.m_id);
+            addFaceOrigin(result, generatedShape, wireId);
         }
     }
 

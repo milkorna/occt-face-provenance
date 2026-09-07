@@ -23,6 +23,12 @@ class ModelViewer
 {
   public:
     explicit ModelViewer(const TrackedShape& trackedShape);
+    ~ModelViewer() noexcept;
+
+    ModelViewer(const ModelViewer&) = delete;
+    ModelViewer& operator=(const ModelViewer&) = delete;
+    ModelViewer(ModelViewer&&) = delete;
+    ModelViewer& operator=(ModelViewer&&) = delete;
 
     void run();
 
@@ -35,6 +41,9 @@ class ModelViewer
     void updateDetectedFaceInfo(const int x, const int y);
     void clearDetectedFaceInfo();
 
+    void releaseViewerResources() noexcept;
+    void destroyWindow() noexcept;
+
     const TrackedShape& m_trackedShape;
 
     HWND m_windowHandle{nullptr};
@@ -46,4 +55,5 @@ class ModelViewer
     Handle(AIS_Shape) m_shapePresentation{};
 
     int m_detectedFaceIndex{0};
+    bool m_isRunning{false};
 };

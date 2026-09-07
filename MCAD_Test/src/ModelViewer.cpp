@@ -32,10 +32,10 @@
 
 namespace
 {
-constexpr wchar_t WINDOW_CLASS_NAME[]{L"ViewerWindow"};
-constexpr wchar_t WINDOW_TITLE[]{L"Viewer"};
-constexpr int WINDOW_WIDTH{900};
-constexpr int WINDOW_HEIGHT{700};
+constexpr wchar_t kWindowClassName[]{L"ViewerWindow"};
+constexpr wchar_t kWindowTitle[]{L"Viewer"};
+constexpr int kWindowWidth{900};
+constexpr int kWindowHeight{700};
 
 int findFaceIndex(const TrackedShape& trackedShape, const TopoDS_Face& face)
 {
@@ -60,22 +60,69 @@ int findFaceIndex(const TrackedShape& trackedShape, const TopoDS_Face& face)
 ModelViewer::ModelViewer(const TrackedShape& trackedShape)
     : m_trackedShape{trackedShape}
 {
-    const TopoDS_Shape& shape{m_trackedShape.shape()};
+    try
+    {
+        const TopoDS_Shape& shape{m_trackedShape.shape()};
 
-    createWindow();
-    initializeViewer();
-    displayShape(shape);
+        createWindow();
+        initializeViewer();
+        displayShape(shape);
+
+        ShowWindow(m_windowHandle, SW_SHOW);
+        UpdateWindow(m_windowHandle);
+    }
+    catch (...)
+    {
+        releaseViewerResources();
+        destroyWindow();
+        throw;
+    }
+}
+
+ModelViewer::~ModelViewer() noexcept
+{
+    releaseViewerResources();
+    destroyWindow();
 }
 
 void ModelViewer::run()
 {
-    MSG message{};
-
-    while (GetMessageW(&message, nullptr, 0, 0) > 0)
+    if (m_windowHandle == nullptr)
     {
-        TranslateMessage(&message);
-        DispatchMessageW(&message);
+        throw std::logic_error("Viewer window is not available");
     }
+
+    m_isRunning = true;
+
+    try
+    {
+        MSG message{};
+
+        while (true)
+        {
+            const BOOL messageResult{GetMessageW(&message, nullptr, 0, 0)};
+
+            if (messageResult == -1)
+            {
+                throw std::runtime_error("Failed to retrieve viewer window message");
+            }
+
+            if (messageResult == 0)
+            {
+                break;
+            }
+
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+    }
+    catch (...)
+    {
+        m_isRunning = false;
+        throw;
+    }
+
+    m_isRunning = false;
 }
 
 LRESULT CALLBACK ModelViewer::windowProcedure(const HWND windowHandle, const UINT message, const WPARAM wParam,
@@ -104,16 +151,15 @@ LRESULT CALLBACK ModelViewer::windowProcedure(const HWND windowHandle, const UIN
     }
     case WM_PAINT:
     {
+        PAINTSTRUCT paintStruct{};
+        BeginPaint(windowHandle, &paintStruct);
+
         if (viewer != nullptr && !viewer->m_view.IsNull())
         {
-            PAINTSTRUCT paintStruct{};
-            BeginPaint(windowHandle, &paintStruct);
-
             viewer->m_view->Redraw();
-
-            EndPaint(windowHandle, &paintStruct);
         }
 
+        EndPaint(windowHandle, &paintStruct);
         return 0;
     }
     case WM_MBUTTONDOWN:
@@ -164,8 +210,23 @@ LRESULT CALLBACK ModelViewer::windowProcedure(const HWND windowHandle, const UIN
     }
     case WM_DESTROY:
     {
-        PostQuitMessage(0);
+        if (viewer != nullptr && viewer->m_isRunning)
+        {
+            PostQuitMessage(0);
+        }
+
         return 0;
+    }
+    case WM_NCDESTROY:
+    {
+        if (viewer != nullptr)
+        {
+            viewer->m_windowHandle = nullptr;
+        }
+
+        SetWindowLongPtrW(windowHandle, GWLP_USERDATA, 0);
+
+        return DefWindowProcW(windowHandle, message, wParam, lParam);
     }
     default:
     {
@@ -183,23 +244,20 @@ void ModelViewer::createWindow()
     windowClass.lpfnWndProc = ModelViewer::windowProcedure;
     windowClass.hInstance = instance;
     windowClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-    windowClass.lpszClassName = WINDOW_CLASS_NAME;
+    windowClass.lpszClassName = kWindowClassName;
 
     if (RegisterClassW(&windowClass) == 0 && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
     {
         throw std::runtime_error("Failed to register viewer window class");
     }
 
-    m_windowHandle = CreateWindowExW(0, WINDOW_CLASS_NAME, WINDOW_TITLE, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-                                     CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, nullptr, nullptr, instance, this);
+    m_windowHandle = CreateWindowExW(0, kWindowClassName, kWindowTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+                                     CW_USEDEFAULT, kWindowWidth, kWindowHeight, nullptr, nullptr, instance, this);
 
     if (m_windowHandle == nullptr)
     {
         throw std::runtime_error("Failed to create viewer window");
     }
-
-    ShowWindow(m_windowHandle, SW_SHOW);
-    UpdateWindow(m_windowHandle);
 }
 
 void ModelViewer::initializeViewer()
@@ -325,5 +383,29 @@ void ModelViewer::clearDetectedFaceInfo()
     }
 
     m_detectedFaceIndex = 0;
-    SetWindowTextW(m_windowHandle, WINDOW_TITLE);
+    SetWindowTextW(m_windowHandle, kWindowTitle);
+}
+
+void ModelViewer::releaseViewerResources() noexcept
+{
+    m_shapePresentation.Nullify();
+    m_context.Nullify();
+    m_view.Nullify();
+    m_viewer.Nullify();
+    m_graphicDriver.Nullify();
+}
+
+void ModelViewer::destroyWindow() noexcept
+{
+    if (m_windowHandle == nullptr)
+    {
+        return;
+    }
+
+    if (IsWindow(m_windowHandle))
+    {
+        DestroyWindow(m_windowHandle);
+    }
+
+    m_windowHandle = nullptr;
 }
