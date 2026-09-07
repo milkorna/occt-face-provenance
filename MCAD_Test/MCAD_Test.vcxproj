@@ -97,6 +97,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\BooleanFeature.cpp" />
+    <ClCompile Include="src\ExampleRunner.cpp" />
     <ClCompile Include="src\ExtrudeFeature.cpp" />
     <ClCompile Include="src\ModelViewer.cpp" />
     <ClCompile Include="src\Sketch.cpp" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BooleanFeature.h" />
+    <ClInclude Include="src\ExampleRunner.h" />
     <ClInclude Include="src\ExtrudeFeature.h" />
     <ClInclude Include="src\ModelViewer.h" />
     <ClInclude Include="src\Sketch.h" />
