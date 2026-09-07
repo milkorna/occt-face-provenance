@@ -109,20 +109,8 @@ TrackedShape buildBoolean(const BooleanType type, const TrackedShape& argument, 
 } // namespace
 
 BooleanFeature::BooleanFeature(const BooleanType type, const TrackedShape& argument, const TrackedShape& tool)
-    : m_id{IdGenerator::nextFeatureId()},
-      m_type{type},
-      m_result{buildBoolean(type, argument, tool)}
+    : m_result{buildBoolean(type, argument, tool)}
 {
-}
-
-int BooleanFeature::id() const noexcept
-{
-    return m_id;
-}
-
-BooleanType BooleanFeature::type() const noexcept
-{
-    return m_type;
 }
 
 const TrackedShape& BooleanFeature::result() const noexcept

@@ -15,14 +15,8 @@
 #include <vector>
 
 Sketch::Sketch(const gp_Pln& plane)
-    : m_id{IdGenerator::nextSketchId()},
-      m_plane{plane}
+    : m_plane{plane}
 {
-}
-
-int Sketch::id() const noexcept
-{
-    return m_id;
 }
 
 const gp_Pln& Sketch::plane() const noexcept

@@ -4,21 +4,26 @@
 
 class Sketch;
 
+/**
+ * @brief Extrusion feature created from sketch wire
+ */
 class ExtrudeFeature
 {
   public:
+    /**
+     * @brief Constructs extrusion feature from sketch wire
+     * @param sketch Source sketch
+     * @param wireId Source wire identifier
+     * @param distance Extrusion distance
+     */
     ExtrudeFeature(const Sketch& sketch, const int wireId, const double distance);
 
-    int id() const noexcept;
-    int sketchId() const noexcept;
-    int wireId() const noexcept;
-    double distance() const noexcept;
+    /**
+     * @brief Returns tracked extrusion result
+     * @return Extrusion result
+     */
     const TrackedShape& result() const noexcept;
 
   private:
-    int m_id;
-    int m_sketchId;
-    int m_wireId;
-    double m_distance;
     TrackedShape m_result;
 };

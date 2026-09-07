@@ -127,32 +127,8 @@ TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double
 } // namespace
 
 ExtrudeFeature::ExtrudeFeature(const Sketch& sketch, const int wireId, const double distance)
-    : m_id{IdGenerator::nextFeatureId()},
-      m_sketchId{sketch.id()},
-      m_wireId{wireId},
-      m_distance{distance},
-      m_result{buildExtrusion(sketch, wireId, distance)}
+    : m_result{buildExtrusion(sketch, wireId, distance)}
 {
-}
-
-int ExtrudeFeature::id() const noexcept
-{
-    return m_id;
-}
-
-int ExtrudeFeature::sketchId() const noexcept
-{
-    return m_sketchId;
-}
-
-int ExtrudeFeature::wireId() const noexcept
-{
-    return m_wireId;
-}
-
-double ExtrudeFeature::distance() const noexcept
-{
-    return m_distance;
 }
 
 const TrackedShape& ExtrudeFeature::result() const noexcept
