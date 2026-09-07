@@ -1,8 +1,5 @@
 #include "Sketch.h"
 
-#include "IdGenerator.h"
-#include "WireInfo.h"
-
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <ElSLib.hxx>
 #include <TopoDS_Wire.hxx>
@@ -10,9 +7,19 @@
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
 
+#include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <vector>
+
+namespace
+{
+int nextWireId() noexcept
+{
+    static int nextId{1};
+    return nextId++;
+}
+} // namespace
 
 Sketch::Sketch(const gp_Pln& plane)
     : m_plane{plane}
@@ -24,7 +31,7 @@ const gp_Pln& Sketch::plane() const noexcept
     return m_plane;
 }
 
-const TopoDS_Wire& Sketch::wire(const int wireId) const
+TopoDS_Wire Sketch::wire(const int wireId) const
 {
     for (const WireInfo& wireInfo : m_wires)
     {
@@ -39,8 +46,8 @@ const TopoDS_Wire& Sketch::wire(const int wireId) const
 
 int Sketch::addClosedWire(const std::vector<gp_Pnt2d>& points)
 {
-    const int wireId{IdGenerator::nextWireId()};
     const TopoDS_Wire wire{makeClosedWire(points)};
+    const int wireId{nextWireId()};
 
     m_wires.push_back(WireInfo{wireId, wire});
 

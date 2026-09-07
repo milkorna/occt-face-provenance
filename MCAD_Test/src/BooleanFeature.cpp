@@ -1,6 +1,5 @@
 #include "BooleanFeature.h"
 
-#include "IdGenerator.h"
 #include "TrackedShape.h"
 
 #include <BRepAlgoAPI_BooleanOperation.hxx>
@@ -23,8 +22,8 @@ void propagateFaceOrigins(const TrackedShape& source, BRepAlgoAPI_BooleanOperati
 {
     for (TopExp_Explorer explorer{source.shape(), TopAbs_FACE}; explorer.More(); explorer.Next())
     {
-        const TopoDS_Face& sourceFace = TopoDS::Face(explorer.Current());
-        const WireIdSet& origins = source.faceOrigins(sourceFace);
+        const TopoDS_Face& sourceFace{TopoDS::Face(explorer.Current())};
+        const WireIdSet& origins{source.faceOrigins(sourceFace)};
 
         if (result.containsFace(sourceFace))
         {
@@ -36,7 +35,7 @@ void propagateFaceOrigins(const TrackedShape& source, BRepAlgoAPI_BooleanOperati
         {
             if (modifiedShape.ShapeType() == TopAbs_FACE)
             {
-                const TopoDS_Face& modifiedFace = TopoDS::Face(modifiedShape);
+                const TopoDS_Face& modifiedFace{TopoDS::Face(modifiedShape)};
 
                 if (!result.containsFace(modifiedFace))
                 {

@@ -52,7 +52,8 @@ class ModelViewer
      * @param lParam Message parameter
      * @return Window procedure result
      */
-    static LRESULT CALLBACK windowProcedure(HWND windowHandle, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK windowProcedure(const HWND windowHandle, const UINT message, const WPARAM wParam,
+                                            const LPARAM lParam);
 
     /**
      * @brief Creates native viewer window

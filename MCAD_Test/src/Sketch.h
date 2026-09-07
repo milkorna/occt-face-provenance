@@ -1,7 +1,5 @@
 #pragma once
 
-#include "WireInfo.h"
-
 #include <TopoDS_Wire.hxx>
 #include <gp_Pln.hxx>
 #include <gp_Pnt2d.hxx>
@@ -31,7 +29,7 @@ class Sketch
      * @param wireId Wire identifier
      * @return Requested wire
      */
-    const TopoDS_Wire& wire(const int wireId) const;
+    TopoDS_Wire wire(const int wireId) const;
 
     /**
      * @brief Adds closed polygonal wire defined in sketch coordinates
@@ -42,13 +40,21 @@ class Sketch
 
   private:
     /**
+     * @brief Wire with its identifier
+     */
+    struct WireInfo
+    {
+        int m_id;
+        TopoDS_Wire m_wire;
+    };
+
+    /**
      * @brief Builds closed polygonal wire from local sketch coordinates
      * @param points Wire vertices in local sketch coordinates
      * @return Constructed wire
      */
     TopoDS_Wire makeClosedWire(const std::vector<gp_Pnt2d>& points) const;
 
-    int m_id;
     gp_Pln m_plane;
     std::vector<WireInfo> m_wires;
 };

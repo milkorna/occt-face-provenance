@@ -1,6 +1,5 @@
 #include "ExtrudeFeature.h"
 
-#include "IdGenerator.h"
 #include "Sketch.h"
 #include "TrackedShape.h"
 
@@ -73,7 +72,7 @@ void addFaceOrigin(TrackedShape& trackedShape, const TopoDS_Shape& shape, const 
 
 TrackedShape buildExtrusion(const Sketch& sketch, const int wireId, const double distance)
 {
-    const TopoDS_Wire& wire{sketch.wire(wireId)};
+    const TopoDS_Wire wire{sketch.wire(wireId)};
     const TopoDS_Face profileFace{makeProfileFace(sketch, wire)};
     const gp_Vec extrusionVector{makeExtrusionVector(sketch, distance)};
 

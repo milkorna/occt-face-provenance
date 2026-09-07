@@ -12,7 +12,7 @@ enum class BooleanType
 };
 
 /**
- * @brief Boolean feature combining two tracked shapes
+ * @brief Boolean operation feature for tracked shapes
  */
 class BooleanFeature
 {
@@ -32,7 +32,5 @@ class BooleanFeature
     const TrackedShape& result() const noexcept;
 
   private:
-    int m_id;
-    BooleanType m_type;
     TrackedShape m_result;
 };

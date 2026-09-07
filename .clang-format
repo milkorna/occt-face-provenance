@@ -23,5 +23,7 @@ PackConstructorInitializers: Never
 SpaceBeforeCpp11BracedList: false
 TypenameMacros: [Handle]
 
+InsertNewlineAtEOF: true
+
 BinPackArguments: true
 BinPackParameters: true

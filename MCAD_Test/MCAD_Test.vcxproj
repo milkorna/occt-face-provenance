@@ -99,7 +99,6 @@
     <ClCompile Include="src\BooleanFeature.cpp" />
     <ClCompile Include="src\ExampleRunner.cpp" />
     <ClCompile Include="src\ExtrudeFeature.cpp" />
-    <ClCompile Include="src\IdGenerator.cpp" />
     <ClCompile Include="src\ModelViewer.cpp" />
     <ClCompile Include="src\Sketch.cpp" />
     <ClCompile Include="src\TrackedShape.cpp" />
@@ -108,11 +107,9 @@
     <ClInclude Include="src\BooleanFeature.h" />
     <ClInclude Include="src\ExampleRunner.h" />
     <ClInclude Include="src\ExtrudeFeature.h" />
-    <ClInclude Include="src\IdGenerator.h" />
     <ClInclude Include="src\ModelViewer.h" />
     <ClInclude Include="src\Sketch.h" />
     <ClInclude Include="src\TrackedShape.h" />
-    <ClInclude Include="src\WireInfo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" Condition="Exists('$(VCInstallDir)vcpkg\scripts\buildsystems\msbuild\vcpkg.targets')" />
