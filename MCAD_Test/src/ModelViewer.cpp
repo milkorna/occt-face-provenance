@@ -1,6 +1,7 @@
 #include "ModelViewer.h"
 
 #include <Windows.h>
+#include <windowsx.h>
 
 #include <AIS_DisplayMode.hxx>
 #include <AIS_InteractiveContext.hxx>
@@ -136,14 +137,16 @@ LRESULT CALLBACK ModelViewer::windowProcedure(const HWND windowHandle, const UIN
     switch (message)
     {
     case WM_SIZE:
+    {
         if (viewer != nullptr && !viewer->m_view.IsNull())
         {
             viewer->m_view->MustBeResized();
         }
 
         return 0;
-
+    }
     case WM_PAINT:
+    {
         if (viewer != nullptr && !viewer->m_view.IsNull())
         {
             PAINTSTRUCT paintStruct{};
@@ -155,15 +158,50 @@ LRESULT CALLBACK ModelViewer::windowProcedure(const HWND windowHandle, const UIN
         }
 
         return 0;
+    }
+    case WM_MBUTTONDOWN:
+    {
+        if (viewer != nullptr && !viewer->m_view.IsNull())
+        {
+            SetCapture(windowHandle);
 
+            viewer->m_view->StartRotation(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+        }
+
+        return 0;
+    }
+    case WM_MOUSEMOVE:
+    {
+        if (viewer != nullptr && !viewer->m_view.IsNull() && (wParam & MK_MBUTTON) != 0)
+        {
+            viewer->m_view->Rotation(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
+            return 0;
+        }
+
+        return DefWindowProcW(windowHandle, message, wParam, lParam);
+    }
+    case WM_MBUTTONUP:
+    {
+        if (GetCapture() == windowHandle)
+        {
+            ReleaseCapture();
+        }
+
+        return 0;
+    }
     case WM_ERASEBKGND:
+    {
         return 1;
-
+    }
     case WM_DESTROY:
+    {
         PostQuitMessage(0);
         return 0;
-
+    }
     default:
+    {
         return DefWindowProcW(windowHandle, message, wParam, lParam);
+    }
     }
 }
